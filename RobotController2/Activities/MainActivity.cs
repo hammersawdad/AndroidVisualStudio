@@ -6,7 +6,7 @@ using Android.Bluetooth;
 using RobotController2.Model;
 using Android.Content;
 
-namespace RobotController2
+namespace RobotController2.Activities
 {
     [Activity(
         Label = "RobotController", 
@@ -17,8 +17,6 @@ namespace RobotController2
     )] 
     public class MainActivity : Activity
     {
-        Button buttonBluetooth;
-
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -26,12 +24,20 @@ namespace RobotController2
             // Set our view from the layout resource
             SetContentView (Resource.Layout.Main);
 
-            // Initialize the Bluetooth Button
-            buttonBluetooth = FindViewById<Button>(Resource.Id.buttonBluetooth);
-            buttonBluetooth.Click += ButtonBluetooth_Click;
+            // Initialize the buttons
+            Button bluetoothbutton = FindViewById<Button>(Resource.Id.BluetoothButton);
+            bluetoothbutton.Click += BluetoothButton_Click;
+
+            Button controllerButton = FindViewById<Button>(Resource.Id.ControllerButton);
+            controllerButton.Click += ControllerButton_Click;
         }
 
-        private void ButtonBluetooth_Click(object sender, System.EventArgs e)
+        private void ControllerButton_Click(object sender, System.EventArgs e)
+        {
+            StartRobotControllerActivity();
+        }
+
+        private void BluetoothButton_Click(object sender, System.EventArgs e)
         {
             StartBlueToothController();
         }
@@ -48,7 +54,7 @@ namespace RobotController2
                 BluetoothConnection.Adapter = adapter;
 
                 // Bluetooth is enabled, so start the activity that selects the Device Connection
-                startSelectDeviceActivity();
+                StartSelectDeviceActivity();
             }
         }
 
@@ -87,11 +93,17 @@ namespace RobotController2
             return true;
         }
 
-        private void startSelectDeviceActivity()
+        private void StartSelectDeviceActivity()
         {
             // Create an instance of the BlueToothController activity
             var selectBluetoothDeviceActivity = new Intent(this, typeof(SelectBluetoothDeviceActivity));
             StartActivity(selectBluetoothDeviceActivity);
+        }
+        private void StartRobotControllerActivity()
+        {
+            // Create an instance of the BlueToothController activity
+            var robotMainControllerActivity = new Intent(this, typeof(RobotMainControllerActivity));
+            StartActivity(robotMainControllerActivity);
         }
     }
 }

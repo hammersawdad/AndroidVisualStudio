@@ -7,8 +7,14 @@
         p1:text="Bluetooth"
         p1:layout_width="wrap_content"
         p1:layout_height="wrap_content"
-        p1:id="@+id/buttonBluetooth"
+        p1:id="@+id/BluetoothButton"
         p1:layout_alignParentLeft="true"
         p1:layout_alignParentTop="true" />
-    
+    <Button
+       p1:text="Controller"
+       p1:layout_width="wrap_content"
+       p1:layout_height="wrap_content"
+       p1:id="@+id/ControllerButton"
+       p1:layout_alignParentTop="true" />
+
 </RelativeLayout>

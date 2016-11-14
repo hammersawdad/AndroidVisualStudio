@@ -10,10 +10,10 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace RobotController2
+namespace RobotController2.Activities
 {
-    [Activity(Label = "RobotMainControllerActivity")]
-    public class RobotMainControllerActivity : Activity
+    [Activity(Label = "RobotParametersActivity")]
+    public class RobotParametersActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {

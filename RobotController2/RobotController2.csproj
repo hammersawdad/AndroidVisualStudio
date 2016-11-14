@@ -51,17 +51,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BluetoothListActivity.cs" />
-    <Compile Include="MainActivity.cs" />
+    <Compile Include="Activities\MainActivity.cs" />
+    <Compile Include="Activities\RobotParametersActivity.cs" />
     <Compile Include="Model\BluetoothConnection.cs" />
+    <Compile Include="Model\RobotMessage.cs" />
+    <Compile Include="Model\RobotParameters.cs" />
+    <Compile Include="Model\Servo.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RobotMainControllerActivity.cs" />
-    <Compile Include="SelectBluetoothDeviceActivity.cs" />
+    <Compile Include="Activities\RobotMainControllerActivity.cs" />
+    <Compile Include="Activities\SelectBluetoothDeviceActivity.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GettingStarted.Xamarin" />
-    <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <AndroidResource Include="Resources\layout\RobotMainController.axml">
       <SubType>Designer</SubType>
@@ -81,9 +82,7 @@
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Activities\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
      Other similar extension points exist, see Microsoft.Common.targets.

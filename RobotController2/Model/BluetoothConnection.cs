@@ -39,7 +39,14 @@ namespace RobotController2.Model
 
             try
             {
-                OutputStream.Write(Encoding.ASCII.GetBytes(message), 0, message.Length);
+                if (OutputStream == null)
+                {
+                    Console.Write(message);
+                }
+                else
+                {
+                    OutputStream.Write(Encoding.ASCII.GetBytes(message), 0, message.Length);
+                }
             }
             catch (IOException e)
             {

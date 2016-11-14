@@ -13,7 +13,7 @@ using Android.Bluetooth;
 using RobotController2.Model;
 using Java.IO;
 
-namespace RobotController2
+namespace RobotController2.Activities
 {
     [Activity(Label = "SelectBluetoothDeviceActivity")]
     public class SelectBluetoothDeviceActivity : ListActivity
@@ -47,55 +47,31 @@ namespace RobotController2
             string[] deviceDescriptions = existingPairedDevices.Select(item => $"{item.Name}|{item.Address}").ToArray();
 
             ListAdapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, deviceDescriptions);
-
-            // Bind the data to the Listview
-            //ArrayAdapter adapter = new ArrayAdapter(this, Resource.Layout.SelectBluetoothDevice,
-            //    Resource.Id.DeviceListView, existingPairedDevices.ToArray());
-
-            //string[] items = new string[] { "Vegetables", "Fruits", "Flower Buds", "Legumes", "Bulbs", "Tubers" };
-            //ArrayAdapter adapter = new ArrayAdapter(this, Resource.Layout.SelectBluetoothDevice,
-            //    Resource.Id.DeviceListView, items);
-
-            //_deviceListView.Adapter = adapter;
-
-            //TextView item = new TextView(this);
-            //item.Text = "one";
-            //TextView item2 = new TextView(this);
-            //item2.Text = "two";
-            //_deviceListView.AddView(item);
-            //_deviceListView.AddView(item2);
         }
 
         public void SelectBluetoothDevice(string selectedItem)
         {
-
             // Parse the string.  It is: [Bluetooth Name]\n[Bluetooth ID]
             string[] stringParts = selectedItem.Split('|');
 
             if (stringParts.Length == 2)
             {
-                // The Bluetooth ID is:  stringParts[1]
-
                 // Activate the Bluetooth Input/Output steams
+                // (the Bluetooth ID is:  stringParts[1])
                 if (ActivateBluetoothStreams(stringParts[1]))
                 {
-
-                    // The device was selected successfully.  Start the Robot Activity
-                    StartControlRobotActivity();
-
+                    // The device was selected successfully.  End the Activity
+                    Finish();
                 }
                 else
                 {
                     Toast.MakeText(this, "Selected Bluetooth device was not enabled.", ToastLength.Long).Show();
                 }
-
             }
             else
             {
                 Toast.MakeText(this, "There was a problem selecting a Device.", ToastLength.Long).Show();
             }
-
-
         }
 
         private bool ActivateBluetoothStreams(string selectedBluetoothID)
@@ -168,12 +144,5 @@ namespace RobotController2
             // If the device wasn't found
             return deviceFound;
         }
-
-        private void StartControlRobotActivity()
-        {
-            // Create an instance of the Control Robot activity
-            StartActivity(new Intent(this, typeof(RobotMainControllerActivity)));
     }
-
-}
 }
