@@ -103,13 +103,6 @@ namespace RobotController2.Activities
 
         private void SteerRobot(ServoDirection servoDirection, int turnValue)
         {
-            // The directionValue should be between 0 and 100
-            //   a value of 50 is straight
-
-            // Get the offset from center (always a positive number)
-            //int offsetFromCenter = calculateOffsetFromCenter(turnValue);
-            int offsetFromCenter = 0;
-
             // If moving FORWARD then ...
             if (servoDirection == ServoDirection.Forward)
             {
@@ -117,12 +110,12 @@ namespace RobotController2.Activities
                 if (turnValue <= 0)
                 {
                     RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.CounterMaxSpeed;
-                    RobotParameters.ServoB.CurrentRotationPosition = calculateSlowWheel(RobotParameters.ClockwiseMaxSpeed, offsetFromCenter);
+                    RobotParameters.ServoB.CurrentRotationPosition = calculateSlowWheel(RobotParameters.ClockwiseMaxSpeed, turnValue);
                 }
                 // If turning RIGHT
                 if (turnValue > 0)
                 {
-                    RobotParameters.ServoA.CurrentRotationPosition = calculateSlowWheel(RobotParameters.CounterMaxSpeed, offsetFromCenter);
+                    RobotParameters.ServoA.CurrentRotationPosition = calculateSlowWheel(RobotParameters.CounterMaxSpeed, turnValue);
                     RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.ClockwiseMaxSpeed;
                 }
             }
@@ -133,14 +126,14 @@ namespace RobotController2.Activities
                 // If turning LEFT
                 if (turnValue <= 0)
                 {
-                    RobotParameters.ServoA.CurrentRotationPosition = calculateSlowWheel(RobotParameters.ClockwiseMaxSpeed, offsetFromCenter);
+                    RobotParameters.ServoA.CurrentRotationPosition = calculateSlowWheel(RobotParameters.ClockwiseMaxSpeed, turnValue);
                     RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.CounterMaxSpeed;
                 }
                 // If turning RIGHT
                 if (turnValue > 0)
                 {
                     RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.ClockwiseMaxSpeed;
-                    RobotParameters.ServoB.CurrentRotationPosition = calculateSlowWheel(RobotParameters.CounterMaxSpeed, offsetFromCenter);
+                    RobotParameters.ServoB.CurrentRotationPosition = calculateSlowWheel(RobotParameters.CounterMaxSpeed, turnValue);
                 }
             }
 
@@ -151,6 +144,9 @@ namespace RobotController2.Activities
                 RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.StopSpeed;
                 RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.StopSpeed;
             }
+
+            // Display the final speed
+            _potisionTextView.Text += $"\r\nA:{RobotParameters.ServoA.CurrentRotationPosition}  B:{RobotParameters.ServoB.CurrentRotationPosition}";
 
             // Send the Message to the Robot
             string message = RobotMessage.FormatSteerMessage(RobotParameters.ServoA, RobotParameters.ServoB);
@@ -180,15 +176,25 @@ namespace RobotController2.Activities
             return offsetFromCenter;
         }
 
-        private int calculateSlowWheel(int fullSpeed, int offsetFromCenter)
+        private int calculateSlowWheel(int fullSpeed, int turnValue)
         {
-            // Default to Full Speed
-            int rotationPosition = fullSpeed;
+            // The "turnValue" will be a range of around:   -200 to +200
+            // The TARGET range is:                         0 to 180
+            //      ClockwiseMaxSpeed   = 180
+            //      StopSpeed           = 90
+            //      CounterMaxSpeed     = 0
+
+            // Adjust the "turnValue" to the range of:      -110 to +290
+            int rotationPosition = turnValue + RobotParameters.StopSpeed;
+
+            // Adjust the "turnValue" to the range of:      -10 to +190
+            // TODO: put this 100 value into a configuration setting
+            if (rotationPosition > 0) rotationPosition = rotationPosition - 100;
+            if (rotationPosition < 0) rotationPosition = rotationPosition + 100;
 
             // Don't allow the return value to go past the mid-point (the STOP value)
             if (fullSpeed == RobotParameters.ClockwiseMaxSpeed)
             {
-                rotationPosition = fullSpeed - offsetFromCenter;
                 if (rotationPosition < RobotParameters.StopSpeed)
                 {
                     rotationPosition = RobotParameters.StopSpeed;
@@ -197,7 +203,6 @@ namespace RobotController2.Activities
 
             if (fullSpeed == RobotParameters.CounterMaxSpeed)
             {
-                rotationPosition = fullSpeed + offsetFromCenter;
                 if (rotationPosition > RobotParameters.StopSpeed)
                 {
                     rotationPosition = RobotParameters.StopSpeed;
