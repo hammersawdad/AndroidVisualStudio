@@ -10,13 +10,17 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using RobotController2.Model;
+using RobotController2.Views;
+using Android.Content.PM;
 
 namespace RobotController2.Activities
 {
-    [Activity(Label = "RobotMainControllerActivity")]
+    [Activity(Label = "RobotMainControllerActivity",
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
+        ScreenOrientation = ScreenOrientation.Landscape //This is what controls orientation
+    )]
     public class RobotMainControllerActivity : Activity
     {
-
         //  CONSTANTS
         private static int ROBOT_ACTION_STEER = 1;
         private static int ROBOT_ACTION_LIGHT = 2;
@@ -27,7 +31,9 @@ namespace RobotController2.Activities
 
         // CLASS SCOPED VARIABLES
         private ServoDirection _servoDirection;
-        private SeekBar _seekBar;
+
+        // CONTROLS
+        TextView _potisionTextView;
 
         public object BluetoothConnector { get; private set; }
 
@@ -50,26 +56,29 @@ namespace RobotController2.Activities
             // Set the default direction to STOP
             _servoDirection = ServoDirection.Stop;
 
-            // Setup methods for the Seekbar
-            _seekBar = (SeekBar)FindViewById(Resource.Id.SeekBar);
-            _seekBar.ProgressChanged += SeekBar_ProgressChanged;
-
-            // Initialize Buttons
+            // Find Controls
             Button initializeButton = (Button)FindViewById(Resource.Id.InitializationButton);
             Button onButton = (Button)FindViewById(Resource.Id.OnButton);
             Button offButton = (Button)FindViewById(Resource.Id.OffButton);
             Button forwardButton = (Button)FindViewById(Resource.Id.ForwardButton);
             Button backwardButton = (Button)FindViewById(Resource.Id.BackwardButton);
             Button stopButton = (Button)FindViewById(Resource.Id.StopButton);
+            JoystickView joystick = (JoystickView)FindViewById(Resource.Id.Joystick);
+            _potisionTextView = (TextView)FindViewById(Resource.Id.PositionTextView);
 
+            // Wire Events
             initializeButton.Click += InitializeButton_Click;
             onButton.Click += OnButton_Click;
             offButton.Click += OffButton_Click;
             forwardButton.Click += ForwardButton_Click;
             backwardButton.Click += BackwardButton_Click;
             stopButton.Click += StopButton_Click;
+            joystick.PositionChanged += Joystick_PositionChanged;
+        }
 
-
+        private void Joystick_PositionChanged(object sender, JoystickPositionEventArgs e)
+        {
+            _potisionTextView.Text = $"X:{e.PositionX}  Y:{e.PositionY}";
         }
 
         private void InitializeButton_Click(object sender, EventArgs e)
@@ -178,7 +187,6 @@ namespace RobotController2.Activities
 
             // Send the Message to the Robot
             string message = RobotMessage.FormatSteerMessage(RobotParameters.ServoA, RobotParameters.ServoB);
-            updateText(message);
             sendRobotMessage(ROBOT_ACTION_STEER, message);
         }
 
@@ -232,17 +240,11 @@ namespace RobotController2.Activities
             return rotationPosition;
         }
 
-        private void updateText(string text)
-        {
-            TextView textView = (TextView)FindViewById(Resource.Id.Text);
-            textView.Text = text;
-        }
-
         private void recenterSteeringControl()
         {
             // Recenter the steering bar
-            SeekBar seekBar = (SeekBar)FindViewById(Resource.Id.SeekBar);
-            seekBar.Progress = SEEKBAR_CENTER_VALUE;
+            //SeekBar seekBar = (SeekBar)FindViewById(Resource.Id.SeekBar);
+            //seekBar.Progress = SEEKBAR_CENTER_VALUE;
         }
 
         private void sendRobotMessage(int action, String message)
