@@ -14,19 +14,19 @@ using Android.Graphics;
 
 namespace VirtualJoystick
 {
-    public class SimpleJoystick : View
+    public class SimpleJoystickView : View
     {
         const int NUM_BUBBLES = 5;
         int radius = 60;
         int radius_big = 180;
 
-        public SimpleJoystick(Context context, IAttributeSet attrs) :
+        public SimpleJoystickView(Context context, IAttributeSet attrs) :
             base(context, attrs)
         {
             Initialize();
         }
 
-        public SimpleJoystick(Context context, IAttributeSet attrs, int defStyle) :
+        public SimpleJoystickView(Context context, IAttributeSet attrs, int defStyle) :
             base(context, attrs, defStyle)
         {
             Initialize();

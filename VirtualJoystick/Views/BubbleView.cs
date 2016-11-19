@@ -16,22 +16,22 @@ using Android.Views.Animations;
 
 namespace VirtualJoystick
 {
-    public class AwesomeView : View
+    public class BubbleView : View
     {
-        public AwesomeView(Context context) :
+        public BubbleView(Context context) :
         base(context)
         {
             this.SetWillNotDraw(false);
             init(context);
         }
-        public AwesomeView(Context context, IAttributeSet attrs) :
+        public BubbleView(Context context, IAttributeSet attrs) :
         base(context, attrs)
         {
             this.SetWillNotDraw(false);
             init(context);
         }
 
-        public AwesomeView(Context context, IAttributeSet attrs, int defStyle) :
+        public BubbleView(Context context, IAttributeSet attrs, int defStyle) :
         base(context, attrs, defStyle)
         {
             this.SetWillNotDraw(false);

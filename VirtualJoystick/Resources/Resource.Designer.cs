@@ -61,7 +61,10 @@ namespace VirtualJoystick
 		{
 			
 			// aapt resource value: 0x7f050000
-			public const int joystickView1 = 2131034112;
+			public const int Joystick = 2131034112;
+			
+			// aapt resource value: 0x7f050001
+			public const int PositionTextView = 2131034113;
 			
 			static Id()
 			{
