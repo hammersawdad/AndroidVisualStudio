@@ -29,9 +29,6 @@ namespace RobotController2.Activities
         // ENUMERATIONS
         private enum ServoDirection { Forward, Stop, Backward }
 
-        // CLASS SCOPED VARIABLES
-        private ServoDirection _servoDirection;
-
         // CONTROLS
         TextView _potisionTextView;
 
@@ -53,16 +50,10 @@ namespace RobotController2.Activities
             // Load any saved settings
             RobotParameters.ReadParametersFromDisk(this);
 
-            // Set the default direction to STOP
-            _servoDirection = ServoDirection.Stop;
-
             // Find Controls
             Button initializeButton = (Button)FindViewById(Resource.Id.InitializationButton);
             Button onButton = (Button)FindViewById(Resource.Id.OnButton);
             Button offButton = (Button)FindViewById(Resource.Id.OffButton);
-            Button forwardButton = (Button)FindViewById(Resource.Id.ForwardButton);
-            Button backwardButton = (Button)FindViewById(Resource.Id.BackwardButton);
-            Button stopButton = (Button)FindViewById(Resource.Id.StopButton);
             JoystickView joystick = (JoystickView)FindViewById(Resource.Id.Joystick);
             _potisionTextView = (TextView)FindViewById(Resource.Id.PositionTextView);
 
@@ -70,15 +61,8 @@ namespace RobotController2.Activities
             initializeButton.Click += InitializeButton_Click;
             onButton.Click += OnButton_Click;
             offButton.Click += OffButton_Click;
-            forwardButton.Click += ForwardButton_Click;
-            backwardButton.Click += BackwardButton_Click;
-            stopButton.Click += StopButton_Click;
             joystick.PositionChanged += Joystick_PositionChanged;
-        }
-
-        private void Joystick_PositionChanged(object sender, JoystickPositionEventArgs e)
-        {
-            _potisionTextView.Text = $"X:{e.PositionX}  Y:{e.PositionY}";
+            joystick.PositionStop += Joystick_PositionStop;
         }
 
         private void InitializeButton_Click(object sender, EventArgs e)
@@ -86,99 +70,82 @@ namespace RobotController2.Activities
             Intent intent = new Intent(this, typeof(RobotParametersActivity));
             StartActivity(intent);
         }
+
         private void OnButton_Click(object sender, EventArgs e)
         {
             sendRobotMessage(ROBOT_ACTION_LIGHT, "ON");
         }
+
         private void OffButton_Click(object sender, EventArgs e)
         {
             sendRobotMessage(ROBOT_ACTION_LIGHT, "OFF");
         }
-        private void ForwardButton_Click(object sender, EventArgs e)
-        {
-            // Recenter the steering bar
-            recenterSteeringControl();
 
-            // Move Forward
-            _servoDirection = ServoDirection.Forward;
-            SteerRobot(SEEKBAR_CENTER_VALUE);
-        }
-        private void BackwardButton_Click(object sender, EventArgs e)
+        private void Joystick_PositionChanged(object sender, JoystickPositionEventArgs e)
         {
-            // Recenter the steering bar
-            recenterSteeringControl();
+            _potisionTextView.Text = $"X:{e.PositionX}  Y:{e.PositionY}";
 
-            // Move Forward
-            _servoDirection = ServoDirection.Backward;
-            SteerRobot(SEEKBAR_CENTER_VALUE);
-        }
-        private void StopButton_Click(object sender, EventArgs e)
-        {
-            // Recenter the steering bar
-            recenterSteeringControl();
+            // Determine the Servo direction (Forward, Backward, Stop)
+            // stop = 0, forward > 0, backward < 0
+            ServoDirection servoDirection = ServoDirection.Stop;
+            if (e.PositionY > 0) servoDirection = ServoDirection.Forward;
+            if (e.PositionY < 0) servoDirection = ServoDirection.Backward;
 
-            // Stop
-            _servoDirection = ServoDirection.Stop;
-            SteerRobot(SEEKBAR_CENTER_VALUE);
+            SteerRobot(servoDirection, e.PositionX);
         }
 
-        private void SeekBar_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        private void Joystick_PositionStop(object sender, JoystickPositionEventArgs e)
         {
-            // If the SeekBar changed due to touching it, then steer the robot
-            if (e.FromUser)
-            {
-                SteerRobot(e.Progress);
-            }
+            // Wait milliseconds so the controller is sure to get the stop message
+            System.Threading.Thread.Sleep(100);
+            SteerRobot(ServoDirection.Stop, 0);
         }
 
-
-
-        private void SteerRobot(int directionValue)
+        private void SteerRobot(ServoDirection servoDirection, int turnValue)
         {
             // The directionValue should be between 0 and 100
             //   a value of 50 is straight
 
             // Get the offset from center (always a positive number)
-            int offsetFromCenter = calculateOffsetFromCenter(directionValue);
+            //int offsetFromCenter = calculateOffsetFromCenter(turnValue);
+            int offsetFromCenter = 0;
 
             // If moving FORWARD then ...
-            if (_servoDirection == ServoDirection.Forward)
+            if (servoDirection == ServoDirection.Forward)
             {
                 // If turning LEFT
-                if (directionValue <= SEEKBAR_CENTER_VALUE)
+                if (turnValue <= 0)
                 {
                     RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.CounterMaxSpeed;
                     RobotParameters.ServoB.CurrentRotationPosition = calculateSlowWheel(RobotParameters.ClockwiseMaxSpeed, offsetFromCenter);
                 }
                 // If turning RIGHT
-                if (directionValue > SEEKBAR_CENTER_VALUE)
+                if (turnValue > 0)
                 {
                     RobotParameters.ServoA.CurrentRotationPosition = calculateSlowWheel(RobotParameters.CounterMaxSpeed, offsetFromCenter);
                     RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.ClockwiseMaxSpeed;
                 }
             }
 
-
             // If moving BACKWARD then ...
-            if (_servoDirection == ServoDirection.Backward)
+            if (servoDirection == ServoDirection.Backward)
             {
                 // If turning LEFT
-                if (directionValue <= SEEKBAR_CENTER_VALUE)
+                if (turnValue <= 0)
                 {
                     RobotParameters.ServoA.CurrentRotationPosition = calculateSlowWheel(RobotParameters.ClockwiseMaxSpeed, offsetFromCenter);
                     RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.CounterMaxSpeed;
                 }
                 // If turning RIGHT
-                if (directionValue > SEEKBAR_CENTER_VALUE)
+                if (turnValue > 0)
                 {
                     RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.ClockwiseMaxSpeed;
                     RobotParameters.ServoB.CurrentRotationPosition = calculateSlowWheel(RobotParameters.CounterMaxSpeed, offsetFromCenter);
                 }
             }
 
-
             // If STOPPING then ...
-            if (_servoDirection == ServoDirection.Stop)
+            if (servoDirection == ServoDirection.Stop)
             {
                 // If turning LEFT
                 RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.StopSpeed;
@@ -238,13 +205,6 @@ namespace RobotController2.Activities
             }
 
             return rotationPosition;
-        }
-
-        private void recenterSteeringControl()
-        {
-            // Recenter the steering bar
-            //SeekBar seekBar = (SeekBar)FindViewById(Resource.Id.SeekBar);
-            //seekBar.Progress = SEEKBAR_CENTER_VALUE;
         }
 
         private void sendRobotMessage(int action, String message)

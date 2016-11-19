@@ -58,6 +58,7 @@ namespace RobotController2.Views
         }
 
         public event EventHandler<JoystickPositionEventArgs> PositionChanged;
+        public event EventHandler<JoystickPositionEventArgs> PositionStop;
 
         private void Initialize()
         {
@@ -155,11 +156,15 @@ namespace RobotController2.Views
             {
                 _positionX = (int)_centerX;
                 _positionY = (int)_centerY;
-                //thread.Interrupt();
-            }
 
-            // Raise the event
-            OnPositionChanged();
+                // Raise the STOP event
+                OnPositionStop();
+            }
+            else
+            {
+                // Raise the event
+                OnPositionChanged();
+            }
 
             return true;
         }
@@ -172,6 +177,16 @@ namespace RobotController2.Views
             args.PositionY = (int)_centerY - _positionY;
 
             PositionChanged?.Invoke(this, args);
+        }
+
+        protected virtual void OnPositionStop()
+        {
+            // Report the X,Y coordinates in relationship to the center fo the joystick
+            JoystickPositionEventArgs args = new JoystickPositionEventArgs();
+            args.PositionX = 0;
+            args.PositionY = 0;
+
+            PositionStop?.Invoke(this, args);
         }
     }
 

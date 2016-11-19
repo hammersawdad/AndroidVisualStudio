@@ -24,7 +24,7 @@ namespace RobotController2.Model
         public static Servo ServoA = new Servo();
         public static Servo ServoB = new Servo();
 
-        private static string SHARED_PREFERENCES_IDENTIFIER = "com.gtillett.robots.robotcontroller2.RobotParameters";
+        //private static string SHARED_PREFERENCES_IDENTIFIER = "robots.robotcontroller2.RobotParameters";
 
         public static void WriteParametersToDisk(Context context)
         {
