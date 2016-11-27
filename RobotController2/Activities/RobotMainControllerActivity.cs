@@ -184,17 +184,21 @@ namespace RobotController2.Activities
             //      StopSpeed           = 90
             //      CounterMaxSpeed     = 0
 
-            // Adjust the "turnValue" to the range of:      -110 to +290
-            int rotationPosition = turnValue + RobotParameters.StopSpeed;
+            // Each wheel turns in a different direction.  So:
+            // If the full speed is Clockwise (180),
+            //      then we subtract the absolute value of the "turnValue" from 180
+            // If the full speed is Counter Clockwise (0), 
+            //      then we add the absolute value of the "turnValue" to 0
 
-            // Adjust the "turnValue" to the range of:      -10 to +190
-            // TODO: put this 100 value into a configuration setting
-            if (rotationPosition > 0) rotationPosition = rotationPosition - 100;
-            if (rotationPosition < 0) rotationPosition = rotationPosition + 100;
+            // Adjust the "turnValue" to the range of around:  0 to 100
+            int adjustedTurnValue = Math.Abs(turnValue) / 2;
 
+            // Set the rotaion speed of the "slow" wheel
             // Don't allow the return value to go past the mid-point (the STOP value)
+            int rotationPosition = RobotParameters.StopSpeed; // default
             if (fullSpeed == RobotParameters.ClockwiseMaxSpeed)
             {
+                rotationPosition = RobotParameters.ClockwiseMaxSpeed - adjustedTurnValue;
                 if (rotationPosition < RobotParameters.StopSpeed)
                 {
                     rotationPosition = RobotParameters.StopSpeed;
@@ -203,6 +207,7 @@ namespace RobotController2.Activities
 
             if (fullSpeed == RobotParameters.CounterMaxSpeed)
             {
+                rotationPosition = RobotParameters.CounterMaxSpeed + adjustedTurnValue;
                 if (rotationPosition > RobotParameters.StopSpeed)
                 {
                     rotationPosition = RobotParameters.StopSpeed;
