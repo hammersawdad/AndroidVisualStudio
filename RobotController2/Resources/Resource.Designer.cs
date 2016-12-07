@@ -60,17 +60,17 @@ namespace RobotController2
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f050007
-			public const int BackwardButton = 2131034119;
-			
 			// aapt resource value: 0x7f050000
 			public const int BluetoothButton = 2131034112;
 			
 			// aapt resource value: 0x7f050001
 			public const int ControllerButton = 2131034113;
 			
-			// aapt resource value: 0x7f050006
-			public const int ForwardButton = 2131034118;
+			// aapt resource value: 0x7f05000a
+			public const int GripperCloseButton = 2131034122;
+			
+			// aapt resource value: 0x7f05000b
+			public const int GripperOpenButton = 2131034123;
 			
 			// aapt resource value: 0x7f050003
 			public const int InitializationButton = 2131034115;
@@ -84,11 +84,20 @@ namespace RobotController2
 			// aapt resource value: 0x7f050004
 			public const int OnButton = 2131034116;
 			
-			// aapt resource value: 0x7f050009
-			public const int PositionTextView = 2131034121;
+			// aapt resource value: 0x7f05000c
+			public const int PositionTextView = 2131034124;
+			
+			// aapt resource value: 0x7f050006
+			public const int ShoulderCloseButton = 2131034118;
+			
+			// aapt resource value: 0x7f050007
+			public const int ShoulderOpenButton = 2131034119;
 			
 			// aapt resource value: 0x7f050008
-			public const int StopButton = 2131034120;
+			public const int WristCloseButton = 2131034120;
+			
+			// aapt resource value: 0x7f050009
+			public const int WristOpenButton = 2131034121;
 			
 			static Id()
 			{

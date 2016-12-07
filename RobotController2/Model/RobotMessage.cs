@@ -14,12 +14,18 @@ namespace RobotController2.Model
 {
     public class RobotMessage
     {
-        private static string ROBOT_MESSAGE_START = "*";
-        private static string ROBOT_MESSAGE_END = "#";
-        private static string ROBOT_MESSAGE_DELIMITER = "|";
+        private static string ROBOT_MESSAGE_START = "{";
+        private static string ROBOT_MESSAGE_END = "}";
+        private static string ROBOT_MESSAGE_DELIMITER = ":";
 
         public static string FormatSteerMessage(Servo servoA, Servo servoB)
         {
+
+            // TODO: Move this to its own Activity
+            servoA.Offset = 4;
+            servoB.Offset = 2;
+
+
             StringBuilder text = new StringBuilder();
             text.Append(servoA.CurrentRotationPosition + servoA.Offset);
             text.Append(" ");

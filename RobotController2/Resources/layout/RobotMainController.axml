@@ -3,42 +3,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1">
-      <RobotController2.Views.JoystickView
-          android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+        android:layout_width="0dp"
+        android:layout_weight=".60"
+        android:layout_height="match_parent">
+        <RobotController2.Views.JoystickView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/Joystick" />
     </LinearLayout>
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1">
+        android:layout_width="0dp"
+        android:layout_weight=".40"
+        android:layout_height="match_parent">
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp">
                 <Button
                     android:id="@+id/InitializationButton"
-                    android:layout_width="50px"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Init" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
                 <Button
                     android:id="@+id/OnButton"
-                    android:layout_width="50px"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:text="Turn On" />
+                    android:text="Turn On"
+                    android:layout_marginLeft="20dp" />
                 <Button
                     android:id="@+id/OffButton"
-                    android:layout_width="50px"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Turn Off" />
             </TableRow>
@@ -46,33 +52,57 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
-                    android:text="Fwd"
-                    android:id="@+id/ForwardButton" />
+                    android:text="S -"
+                    android:id="@+id/ShoulderCloseButton"
+                    android:layout_marginLeft="20dp" />
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
-                    android:text="Back"
-                    android:id="@+id/BackwardButton"
-                    android:layout_marginEnd="30dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Stop"
-                    android:id="@+id/StopButton"
-                    android:layout_marginEnd="114dp" />
+                    android:text="S +"
+                    android:id="@+id/ShoulderOpenButton" />
             </TableRow>
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="50px">
+                android:layout_height="match_parent">
+                <Button
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:text="W -"
+                    android:id="@+id/WristCloseButton"
+                    android:layout_marginLeft="20dp" />
+                <Button
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:text="W +"
+                    android:id="@+id/WristOpenButton" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <Button
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:text="G -"
+                    android:id="@+id/GripperCloseButton"
+                    android:layout_marginLeft="20dp" />
+                <Button
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:text="G +"
+                    android:id="@+id/GripperOpenButton" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
                 <TextView
                     android:id="@+id/PositionTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Position" />
+                    android:text="Position"
+                    android:layout_marginLeft="20dp" />
             </TableRow>
         </TableLayout>
     </LinearLayout>

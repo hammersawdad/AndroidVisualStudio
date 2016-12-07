@@ -16,7 +16,7 @@ namespace RobotController2.Model
 {
     public class BluetoothConnection
     {
-        private static int BLUETOOTH_THROTTLE_MILLISECONDS = 100;
+        private static int BLUETOOTH_THROTTLE_MILLISECONDS = 50;
 
         private static DateTime lastBlueToothTransmit = DateTime.Now;
 

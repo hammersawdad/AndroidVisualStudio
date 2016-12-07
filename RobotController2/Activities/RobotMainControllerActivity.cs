@@ -12,6 +12,8 @@ using Android.Widget;
 using RobotController2.Model;
 using RobotController2.Views;
 using Android.Content.PM;
+using System.Timers;
+using Android.Graphics;
 
 namespace RobotController2.Activities
 {
@@ -21,18 +23,39 @@ namespace RobotController2.Activities
     )]
     public class RobotMainControllerActivity : Activity
     {
-        //  CONSTANTS
-        private static int ROBOT_ACTION_STEER = 1;
-        private static int ROBOT_ACTION_LIGHT = 2;
-        private static int SEEKBAR_CENTER_VALUE = 50;
-
         // ENUMERATIONS
         private enum ServoDirection { Forward, Stop, Backward }
+        private enum RobotAction
+        {
+            Steer = 1,
+            Light = 2,
+            Shoulder = 3,
+            Wrist = 4,
+            Gripper = 5
+        }
+        private enum ButtonAction
+        {
+            ShoulderOpen,
+            ShoulderClose,
+            WristOpen,
+            WristClose,
+            GripperOpen,
+            GripperClose
+        }
+
 
         // CONTROLS
         TextView _potisionTextView;
-
+        ButtonAction _buttonAction;
+        private Timer _timer;
         public object BluetoothConnector { get; private set; }
+
+        private Button _shoulderOpenButton;
+        private Button _shoulderCloseButton;
+        private Button _wristOpenButton;
+        private Button _wristCloseButton;
+        private Button _gripperOpenButton;
+        private Button _gripperCloseButton;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -50,19 +73,110 @@ namespace RobotController2.Activities
             // Load any saved settings
             RobotParameters.ReadParametersFromDisk(this);
 
-            // Find Controls
+            // Text
+            _potisionTextView = (TextView)FindViewById(Resource.Id.PositionTextView);
+
+            // Button Controls
             Button initializeButton = (Button)FindViewById(Resource.Id.InitializationButton);
             Button onButton = (Button)FindViewById(Resource.Id.OnButton);
             Button offButton = (Button)FindViewById(Resource.Id.OffButton);
-            JoystickView joystick = (JoystickView)FindViewById(Resource.Id.Joystick);
-            _potisionTextView = (TextView)FindViewById(Resource.Id.PositionTextView);
-
-            // Wire Events
             initializeButton.Click += InitializeButton_Click;
             onButton.Click += OnButton_Click;
             offButton.Click += OffButton_Click;
+
+            // Joystick
+            JoystickView joystick = (JoystickView)FindViewById(Resource.Id.Joystick);
             joystick.PositionChanged += Joystick_PositionChanged;
             joystick.PositionStop += Joystick_PositionStop;
+
+            // Arm buttons
+            _shoulderOpenButton = (Button)FindViewById(Resource.Id.ShoulderOpenButton);
+            _shoulderCloseButton = (Button)FindViewById(Resource.Id.ShoulderCloseButton);
+            _wristOpenButton = (Button)FindViewById(Resource.Id.WristOpenButton);
+            _wristCloseButton = (Button)FindViewById(Resource.Id.WristCloseButton);
+            _gripperOpenButton = (Button)FindViewById(Resource.Id.GripperOpenButton);
+            _gripperCloseButton = (Button)FindViewById(Resource.Id.GripperCloseButton);
+
+            _shoulderOpenButton.Touch += Button_Touch;
+            _shoulderCloseButton.Touch += Button_Touch;
+            _wristOpenButton.Touch += Button_Touch;
+            _wristCloseButton.Touch += Button_Touch;
+            _gripperOpenButton.Touch += Button_Touch;
+            _gripperCloseButton.Touch += Button_Touch;
+
+            _timer = new Timer();
+            _timer.Interval = 1;  // interval in milliseconds
+            _timer.Enabled = false;
+            _timer.Elapsed += TimerEvent;
+            _timer.AutoReset = true;
+        }
+
+        private void Button_Touch(object sender, View.TouchEventArgs e)
+        {
+            if (sender == _shoulderOpenButton)
+            {
+                _buttonAction = ButtonAction.ShoulderOpen;
+            }
+            if (sender == _shoulderCloseButton)
+            {
+                _buttonAction = ButtonAction.ShoulderClose;
+            }
+            if (sender == _wristOpenButton)
+            {
+                _buttonAction = ButtonAction.WristOpen;
+            }
+            if (sender == _wristCloseButton)
+            {
+                _buttonAction = ButtonAction.WristClose;
+            }
+            if (sender == _gripperOpenButton)
+            {
+                _buttonAction = ButtonAction.GripperOpen;
+            }
+            if (sender == _gripperCloseButton)
+            {
+                _buttonAction = ButtonAction.GripperClose;
+            }
+
+            // Set the Timer
+            SetTimer(e);
+        }
+
+        private void SetTimer(View.TouchEventArgs e)
+        {
+            if (e.Event.Action == MotionEventActions.Down)
+            {
+                _timer.Enabled = true;
+            }
+            if (e.Event.Action == MotionEventActions.Up)
+            {
+                _timer.Enabled = false;
+            }
+        }
+
+        private void TimerEvent(Object source, ElapsedEventArgs e)
+        {
+            switch (_buttonAction)
+            {
+                case ButtonAction.ShoulderOpen:
+                    sendRobotMessage(RobotAction.Shoulder, "OPEN");
+                    break;
+                case ButtonAction.ShoulderClose:
+                    sendRobotMessage(RobotAction.Shoulder, "CLOSE");
+                    break;
+                case ButtonAction.WristOpen:
+                    sendRobotMessage(RobotAction.Wrist, "OPEN");
+                    break;
+                case ButtonAction.WristClose:
+                    sendRobotMessage(RobotAction.Wrist, "CLOSE");
+                    break;
+                case ButtonAction.GripperOpen:
+                    sendRobotMessage(RobotAction.Gripper, "OPEN");
+                    break;
+                case ButtonAction.GripperClose:
+                    sendRobotMessage(RobotAction.Gripper, "CLOSE");
+                    break;
+            }
         }
 
         private void InitializeButton_Click(object sender, EventArgs e)
@@ -73,12 +187,12 @@ namespace RobotController2.Activities
 
         private void OnButton_Click(object sender, EventArgs e)
         {
-            sendRobotMessage(ROBOT_ACTION_LIGHT, "ON");
+            sendRobotMessage(RobotAction.Light, "ON");
         }
 
         private void OffButton_Click(object sender, EventArgs e)
         {
-            sendRobotMessage(ROBOT_ACTION_LIGHT, "OFF");
+            sendRobotMessage(RobotAction.Light, "OFF");
         }
 
         private void Joystick_PositionChanged(object sender, JoystickPositionEventArgs e)
@@ -150,33 +264,33 @@ namespace RobotController2.Activities
 
             // Send the Message to the Robot
             string message = RobotMessage.FormatSteerMessage(RobotParameters.ServoA, RobotParameters.ServoB);
-            sendRobotMessage(ROBOT_ACTION_STEER, message);
-        }
-
-        private int calculateOffsetFromCenter(int directionValue)
-        {
-            // Get the offset from center (always a positive number)
-            int offsetFromCenter = Math.Abs(SEEKBAR_CENTER_VALUE - directionValue);
-
-            // Determine if the seekbar is very close to the center.
-            //  If so, then treat is as the center, to help drive straight
-            if (offsetFromCenter <= RobotParameters.SteeringCenterZoneOffset)
-            {
-                // the seekbar is right near the center, so treat is as being dead center
-                offsetFromCenter = 0;
-            }
-            else
-            {
-                // the seekbar is outside of the "padded" zone, so ...
-                // 1. subtract the Padding Offset
-                // 2. add the Steering Sensivity offset
-                offsetFromCenter = offsetFromCenter - RobotParameters.SteeringCenterZoneOffset + RobotParameters.SteeringSensitivityOffset;
-            }
-
-            return offsetFromCenter;
+            sendRobotMessage(RobotAction.Steer, message);
         }
 
         private int calculateSlowWheel(int fullSpeed, int turnValue)
+        {
+            int rotationPosition = fullSpeed; // default
+
+            if (fullSpeed == RobotParameters.ClockwiseMaxSpeed)
+            {
+                if (turnValue < -100)
+                {
+                    rotationPosition = RobotParameters.StopSpeed;
+                }
+            }
+
+            if (fullSpeed == RobotParameters.CounterMaxSpeed)
+            {
+                if (turnValue > 100)
+                {
+                    rotationPosition = RobotParameters.StopSpeed;
+                }
+            }
+
+            return rotationPosition;
+        }
+
+        private int calculateSlowWheel_SmoothTransition(int fullSpeed, int turnValue)
         {
             // The "turnValue" will be a range of around:   -200 to +200
             // The TARGET range is:                         0 to 180
@@ -217,10 +331,10 @@ namespace RobotController2.Activities
             return rotationPosition;
         }
 
-        private void sendRobotMessage(int action, String message)
+        private void sendRobotMessage(RobotAction action, String message)
         {
             // Format the message
-            string robotMessage = RobotMessage.FormatRobotMessage(action, message);
+            string robotMessage = RobotMessage.FormatRobotMessage((int)action, message);
 
             // Send the Bluetooth data
             BluetoothConnection.Write(robotMessage);
