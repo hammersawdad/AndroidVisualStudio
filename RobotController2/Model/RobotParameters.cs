@@ -16,7 +16,9 @@ namespace RobotController2.Model
     class RobotParameters
     {
         public static int ClockwiseMaxSpeed = 180;
+        public static int ClockwiseSlowSpeed = 110;
         public static int CounterMaxSpeed = 0;
+        public static int CounterSlowSpeed = 85;
         public static int StopSpeed = 90;
         public static int SteeringSensitivityOffset = 40;
         public static int SteeringCenterZoneOffset = 5;

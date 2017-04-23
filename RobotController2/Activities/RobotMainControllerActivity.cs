@@ -17,6 +17,23 @@ using Android.Graphics;
 
 namespace RobotController2.Activities
 {
+    /// <summary>
+    /// Main Activity
+    /// 
+    /// WHEEL SPEEDS
+    ///     Left wheel = second value in json
+    ///         Stop = 90
+    ///         Forward Slow = 110
+    ///         Forward Fast = 130
+    ///         Backward Slow = 85
+    ///         Backward Fast = 75
+    ///     Right wheel = first value in json
+    ///         Stop = 92
+    ///         Forward Slow = 85
+    ///         Forward Fast = 75
+    ///         Backward Slow = 105
+    ///         Backward Fast = 130
+    /// </summary>
     [Activity(Label = "RobotMainControllerActivity",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
         ScreenOrientation = ScreenOrientation.Landscape //This is what controls orientation
@@ -273,7 +290,11 @@ namespace RobotController2.Activities
 
             if (fullSpeed == RobotParameters.ClockwiseMaxSpeed)
             {
-                if (turnValue < -100)
+                if (turnValue < -80)
+                {
+                    rotationPosition = RobotParameters.ClockwiseSlowSpeed;
+                }
+                if (turnValue < -140)
                 {
                     rotationPosition = RobotParameters.StopSpeed;
                 }
@@ -281,7 +302,11 @@ namespace RobotController2.Activities
 
             if (fullSpeed == RobotParameters.CounterMaxSpeed)
             {
-                if (turnValue > 100)
+                if (turnValue > 80)
+                {
+                    rotationPosition = RobotParameters.CounterSlowSpeed;
+                }
+                if (turnValue > 140)
                 {
                     rotationPosition = RobotParameters.StopSpeed;
                 }
