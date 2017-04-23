@@ -28,6 +28,12 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp">
                 <Button
+                    android:id="@+id/LightButton"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="Light"
+                    android:layout_marginLeft="20dp" />
+                <Button
                     android:id="@+id/InitializationButton"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
@@ -37,16 +43,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <Button
-                    android:id="@+id/OnButton"
-                    android:layout_width="100dp"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
-                    android:text="Turn On"
+                    android:text="H -"
+                    android:id="@+id/HeadLeftButton"
                     android:layout_marginLeft="20dp" />
                 <Button
-                    android:id="@+id/OffButton"
-                    android:layout_width="100dp"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
-                    android:text="Turn Off" />
+                    android:text="H +"
+                    android:id="@+id/HeadRightButton" />
             </TableRow>
             <TableRow
                 android:layout_width="match_parent"

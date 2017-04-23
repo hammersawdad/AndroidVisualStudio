@@ -66,38 +66,41 @@ namespace RobotController2
 			// aapt resource value: 0x7f050001
 			public const int ControllerButton = 2131034113;
 			
-			// aapt resource value: 0x7f05000a
-			public const int GripperCloseButton = 2131034122;
-			
 			// aapt resource value: 0x7f05000b
-			public const int GripperOpenButton = 2131034123;
+			public const int GripperCloseButton = 2131034123;
 			
-			// aapt resource value: 0x7f050003
-			public const int InitializationButton = 2131034115;
+			// aapt resource value: 0x7f05000c
+			public const int GripperOpenButton = 2131034124;
+			
+			// aapt resource value: 0x7f050005
+			public const int HeadLeftButton = 2131034117;
+			
+			// aapt resource value: 0x7f050006
+			public const int HeadRightButton = 2131034118;
+			
+			// aapt resource value: 0x7f050004
+			public const int InitializationButton = 2131034116;
 			
 			// aapt resource value: 0x7f050002
 			public const int Joystick = 2131034114;
 			
-			// aapt resource value: 0x7f050005
-			public const int OffButton = 2131034117;
+			// aapt resource value: 0x7f050003
+			public const int LightButton = 2131034115;
 			
-			// aapt resource value: 0x7f050004
-			public const int OnButton = 2131034116;
-			
-			// aapt resource value: 0x7f05000c
-			public const int PositionTextView = 2131034124;
-			
-			// aapt resource value: 0x7f050006
-			public const int ShoulderCloseButton = 2131034118;
+			// aapt resource value: 0x7f05000d
+			public const int PositionTextView = 2131034125;
 			
 			// aapt resource value: 0x7f050007
-			public const int ShoulderOpenButton = 2131034119;
+			public const int ShoulderCloseButton = 2131034119;
 			
 			// aapt resource value: 0x7f050008
-			public const int WristCloseButton = 2131034120;
+			public const int ShoulderOpenButton = 2131034120;
 			
 			// aapt resource value: 0x7f050009
-			public const int WristOpenButton = 2131034121;
+			public const int WristCloseButton = 2131034121;
+			
+			// aapt resource value: 0x7f05000a
+			public const int WristOpenButton = 2131034122;
 			
 			static Id()
 			{

@@ -40,6 +40,9 @@ namespace RobotController2.Activities
     )]
     public class RobotMainControllerActivity : Activity
     {
+        // FLAGS
+        bool _lightOn = false;
+
         // ENUMERATIONS
         private enum ServoDirection { Forward, Stop, Backward }
         private enum RobotAction
@@ -48,10 +51,13 @@ namespace RobotController2.Activities
             Light = 2,
             Shoulder = 3,
             Wrist = 4,
-            Gripper = 5
+            Gripper = 5,
+            Head = 6
         }
         private enum ButtonAction
         {
+            HeadLeft,
+            HeadRight,
             ShoulderOpen,
             ShoulderClose,
             WristOpen,
@@ -67,6 +73,8 @@ namespace RobotController2.Activities
         private Timer _timer;
         public object BluetoothConnector { get; private set; }
 
+        private Button _headLeftButton;
+        private Button _headRightButton;
         private Button _shoulderOpenButton;
         private Button _shoulderCloseButton;
         private Button _wristOpenButton;
@@ -95,18 +103,18 @@ namespace RobotController2.Activities
 
             // Button Controls
             Button initializeButton = (Button)FindViewById(Resource.Id.InitializationButton);
-            Button onButton = (Button)FindViewById(Resource.Id.OnButton);
-            Button offButton = (Button)FindViewById(Resource.Id.OffButton);
+            Button lightButton = (Button)FindViewById(Resource.Id.LightButton);
             initializeButton.Click += InitializeButton_Click;
-            onButton.Click += OnButton_Click;
-            offButton.Click += OffButton_Click;
+            lightButton.Click += LightButton_Click;
 
             // Joystick
             JoystickView joystick = (JoystickView)FindViewById(Resource.Id.Joystick);
             joystick.PositionChanged += Joystick_PositionChanged;
             joystick.PositionStop += Joystick_PositionStop;
 
-            // Arm buttons
+            // Head and Arm buttons
+            _headLeftButton = (Button)FindViewById(Resource.Id.HeadLeftButton);
+            _headRightButton = (Button)FindViewById(Resource.Id.HeadRightButton);
             _shoulderOpenButton = (Button)FindViewById(Resource.Id.ShoulderOpenButton);
             _shoulderCloseButton = (Button)FindViewById(Resource.Id.ShoulderCloseButton);
             _wristOpenButton = (Button)FindViewById(Resource.Id.WristOpenButton);
@@ -114,6 +122,8 @@ namespace RobotController2.Activities
             _gripperOpenButton = (Button)FindViewById(Resource.Id.GripperOpenButton);
             _gripperCloseButton = (Button)FindViewById(Resource.Id.GripperCloseButton);
 
+            _headLeftButton.Touch += Button_Touch;
+            _headRightButton.Touch += Button_Touch;
             _shoulderOpenButton.Touch += Button_Touch;
             _shoulderCloseButton.Touch += Button_Touch;
             _wristOpenButton.Touch += Button_Touch;
@@ -130,6 +140,14 @@ namespace RobotController2.Activities
 
         private void Button_Touch(object sender, View.TouchEventArgs e)
         {
+            if (sender == _headLeftButton)
+            {
+                _buttonAction = ButtonAction.HeadLeft;
+            }
+            if (sender == _headRightButton)
+            {
+                _buttonAction = ButtonAction.HeadRight;
+            }
             if (sender == _shoulderOpenButton)
             {
                 _buttonAction = ButtonAction.ShoulderOpen;
@@ -175,6 +193,12 @@ namespace RobotController2.Activities
         {
             switch (_buttonAction)
             {
+                case ButtonAction.HeadLeft:
+                    sendRobotMessage(RobotAction.Head, "OPEN");
+                    break;
+                case ButtonAction.HeadRight:
+                    sendRobotMessage(RobotAction.Head, "CLOSE");
+                    break;
                 case ButtonAction.ShoulderOpen:
                     sendRobotMessage(RobotAction.Shoulder, "OPEN");
                     break;
@@ -202,14 +226,17 @@ namespace RobotController2.Activities
             StartActivity(intent);
         }
 
-        private void OnButton_Click(object sender, EventArgs e)
+        private void LightButton_Click(object sender, EventArgs e)
         {
-            sendRobotMessage(RobotAction.Light, "ON");
-        }
-
-        private void OffButton_Click(object sender, EventArgs e)
-        {
-            sendRobotMessage(RobotAction.Light, "OFF");
+            if (_lightOn)
+            {
+                sendRobotMessage(RobotAction.Light, "OFF");
+            }
+            else
+            {
+                sendRobotMessage(RobotAction.Light, "ON");
+            }
+            _lightOn = !_lightOn;
         }
 
         private void Joystick_PositionChanged(object sender, JoystickPositionEventArgs e)
