@@ -265,16 +265,21 @@ namespace RobotController2.Activities
             if (servoDirection == ServoDirection.Forward)
             {
                 // If turning LEFT
-                if (turnValue <= 0)
+                if (turnValue < -150)
                 {
-                    RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.CounterMaxSpeed;
-                    RobotParameters.ServoB.CurrentRotationPosition = calculateSlowWheel(RobotParameters.ClockwiseMaxSpeed, turnValue);
+                    RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.CounterMaxSpeed - 30;
+                    RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.StopSpeed;
                 }
                 // If turning RIGHT
-                if (turnValue > 0)
+                else if (turnValue > 150)
                 {
-                    RobotParameters.ServoA.CurrentRotationPosition = calculateSlowWheel(RobotParameters.CounterMaxSpeed, turnValue);
-                    RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.ClockwiseMaxSpeed;
+                    RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.StopSpeed;
+                    RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.ClockwiseMaxSpeed + 60;
+                }
+                else
+                {
+                    RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.CounterMaxSpeed - 30;
+                    RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.ClockwiseMaxSpeed + 60;
                 }
             }
 
@@ -282,16 +287,21 @@ namespace RobotController2.Activities
             if (servoDirection == ServoDirection.Backward)
             {
                 // If turning LEFT
-                if (turnValue <= 0)
+                if (turnValue < -150)
                 {
-                    RobotParameters.ServoA.CurrentRotationPosition = calculateSlowWheel(RobotParameters.ClockwiseMaxSpeed, turnValue);
+                    RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.StopSpeed;
                     RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.CounterMaxSpeed;
                 }
                 // If turning RIGHT
-                if (turnValue > 0)
+                else if (turnValue > 150)
                 {
                     RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.ClockwiseMaxSpeed;
-                    RobotParameters.ServoB.CurrentRotationPosition = calculateSlowWheel(RobotParameters.CounterMaxSpeed, turnValue);
+                    RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.StopSpeed;
+                }
+                else
+                {
+                    RobotParameters.ServoA.CurrentRotationPosition = RobotParameters.ClockwiseMaxSpeed;
+                    RobotParameters.ServoB.CurrentRotationPosition = RobotParameters.CounterMaxSpeed;
                 }
             }
 
